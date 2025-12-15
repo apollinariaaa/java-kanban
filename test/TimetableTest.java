@@ -12,90 +12,58 @@ public class TimetableTest {
 
         Group group = new Group("Акробатика для детей", Age.CHILD, 60);
         Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
-        TrainingSession singleTrainingSession = new TrainingSession(
+
+        timetable.addNewTrainingSession(new TrainingSession(
                 group, coach, DayOfWeek.MONDAY, new TimeOfDay(13, 0)
-        );
+        ));
 
-        timetable.addNewTrainingSession(singleTrainingSession);
-
-        // Понедельник
-        Collection<List<TrainingSession>> mondaySessions =
+        List<TrainingSession> mondaySessions =
                 timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY);
 
-        int count = 0;
-        for (List<TrainingSession> list : mondaySessions) {
-            count += list.size();
+        System.out.println("Понедельник:");
+        for (TrainingSession ts : mondaySessions) {
+            System.out.println(ts.getGroup().getTitle() + " в "
+                    + ts.getTimeOfDay().getHours() + ":"
+                    + ts.getTimeOfDay().getMinutes());
         }
 
-        System.out.println("Понедельник: занятий " + count);
-
-        // Вторник
-        Collection<List<TrainingSession>> tuesdaySessions =
+        List<TrainingSession> tuesdaySessions =
                 timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY);
 
-        if (tuesdaySessions.isEmpty()) {
-            System.out.println("Вторник: Нет занятий");
-        }
+        System.out.println("Вторник: " +
+                (tuesdaySessions.isEmpty() ? "нет занятий" : "есть занятия"));
     }
 
+
     @Test
-    void testGetTrainingSessionsForDayMultipleSessions() {
+    void testGetTrainingSessionsForDayMultipleSessionsOrdered() {
         Timetable timetable = new Timetable();
 
         Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
 
-        Group groupAdult = new Group("Акробатика для взрослых", Age.ADULT, 90);
         timetable.addNewTrainingSession(new TrainingSession(
-                groupAdult, coach, DayOfWeek.THURSDAY, new TimeOfDay(20, 0)
+                new Group("Акробатика для детей", Age.CHILD, 60),
+                coach, DayOfWeek.THURSDAY, new TimeOfDay(13, 0)
         ));
 
-        Group groupChild = new Group("Акробатика для детей", Age.CHILD, 60);
         timetable.addNewTrainingSession(new TrainingSession(
-                groupChild, coach, DayOfWeek.MONDAY, new TimeOfDay(13, 0)
-        ));
-        timetable.addNewTrainingSession(new TrainingSession(
-                groupChild, coach, DayOfWeek.THURSDAY, new TimeOfDay(13, 0)
-        ));
-        timetable.addNewTrainingSession(new TrainingSession(
-                groupChild, coach, DayOfWeek.SATURDAY, new TimeOfDay(10, 0)
+                new Group("Йога для взрослых", Age.ADULT, 90),
+                coach, DayOfWeek.THURSDAY, new TimeOfDay(11, 30)
         ));
 
-        // Понедельник
-        Collection<List<TrainingSession>> mondaySessions =
-                timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY);
-        int mondayCount = 0;
-        for (List<TrainingSession> list : mondaySessions) {
-            mondayCount += list.size();
-        }
-        System.out.println("Понедельник: занятий " + mondayCount);
+        timetable.addNewTrainingSession(new TrainingSession(
+                new Group("Гимнастика", Age.CHILD, 60),
+                coach, DayOfWeek.THURSDAY, new TimeOfDay(16, 0)
+        ));
 
-        // Четверг
-        Collection<List<TrainingSession>> thursdaySessions =
+        List<TrainingSession> thursdaySessions =
                 timetable.getTrainingSessionsForDay(DayOfWeek.THURSDAY);
 
-        int thursdayCount = 0;
-        int firstHour = -1;
-        int secondHour = -1;
-        int i = 0;
-
-        for (List<TrainingSession> list : thursdaySessions) {
-            for (TrainingSession ts : list) {
-                thursdayCount++;
-                if (i == 0) firstHour = ts.getTimeOfDay().getHours();
-                if (i == 1) secondHour = ts.getTimeOfDay().getHours();
-            }
-            i++;
-        }
-
-        System.out.println("Четверг: занятий " + thursdayCount);
-        System.out.println("Первое занятие: " + firstHour + ":00");
-        System.out.println("Второе занятие: " + secondHour + ":00");
-
-        // Вторник
-        Collection<List<TrainingSession>> tuesdaySessions =
-                timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY);
-        if (tuesdaySessions.isEmpty()) {
-            System.out.println("Вторник: Нет занятий");
+        System.out.println("Четверг (по порядку):");
+        for (TrainingSession ts : thursdaySessions) {
+            System.out.println(ts.getGroup().getTitle() + " в "
+                    + ts.getTimeOfDay().getHours() + ":"
+                    + ts.getTimeOfDay().getMinutes());
         }
     }
 
